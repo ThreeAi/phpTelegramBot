@@ -25,24 +25,31 @@ class StartCommand extends Command
     public function handle()
     {
         $userData = $this->getUpdate()->message->from;
-        $moodleId = json_decode(file_get_contents($this->request['webservice'] . 
-                                        $this->request['moodleBotToken'] . 
-                                        $this->request['getUser'] . 
-                                        $userData->username . 
+        $moodleId = json_decode(file_get_contents($this->request['webservice'] .
+                                        $this->request['moodleBotToken'] .
+                                        $this->request['getUser'] .
+                                        $userData->username .
                                         $this->request['format']));
+        if ($moodleId == 0){
+            $this->replyWithMessage([
+                'text' =>  'У вас не указан username',
+                'parse_mode' => 'HTML'
+            ]);
+            exit;
+        }
         $user = $this->telegramUser->firstOrCreate(['user_id' => $userData->id],
         [
             'user_id' => $userData->id,
             'username' => $userData->username,
             'moodle_id' => $moodleId
         ]);
-        if ($moodleId == 0){
-            $this->replyWithMessage([
-                'text' =>  'У вас не указан username',
-                'parse_mode' => 'HTML'
+        if ($user->wasRecentlyCreated){
+            $user = $this->telegramUser->firstOrCreate(['user_id' => $userData->id],
+            [
+                'user_id' => $userData->id,
+                'username' => $userData->username,
+                'moodle_id' => $moodleId
             ]);
-        }
-        else if ($user->wasRecentlyCreated){
             $this->replyWithMessage([
                 'text' =>  'Вы зарегистирированы в базе бота',
                 'parse_mode' => 'HTML'
