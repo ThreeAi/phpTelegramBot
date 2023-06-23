@@ -38,12 +38,19 @@ class GetDeadlinesCommand extends Command
                                         $moodleId .
                                         $this->request['format']));
         $keyboard = array();
+        if (empty($courses)){
+            $this->replyWithMessage([
+                'text' => "<b>Вы не записаны ни на один курс </b>",
+                'parse_mode' => 'HTML'
+            ]);
+            exit;
+        }
         foreach ($courses as $course){
             array_push($keyboard , [['text' => $course->shortname, 'callback_data' => 'GetDeadlines_' . 'getTime_' . $course->id]]);
         }
         $encodeMarkup = json_encode(array('inline_keyboard' => $keyboard));
         $this->replyWithMessage([
-            'text' =>  "<b> ваши курсы </b>",
+            'text' =>  "<b>Курсы на которые вы записаны: </b>",
             'parse_mode' => 'HTML',
             'reply_markup' => (string)$encodeMarkup
         ]);

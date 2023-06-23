@@ -36,6 +36,7 @@ return [
             'commands'            => [
                 \App\Commands\StartCommand::class,
                 \App\Commands\GetDeadlinesCommand::class,
+                \App\Commands\GetFaqCommand::class,
             ],
         ],
 
