@@ -31,7 +31,6 @@ class WebhookController extends Controller
         $class = new $className;
         $method = $callbackData[1];
         $value = $callbackData[2];
-        dump($callbackData);
         $class->$method($userId, $value, $this->botsManager);
     }
 }

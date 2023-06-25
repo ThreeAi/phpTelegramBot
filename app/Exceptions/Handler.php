@@ -38,4 +38,19 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+    public function report(Throwable $e) {
+        $data = [
+            'description' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine()
+        ];
+        \Illuminate\Support\Facades\Http::post('https://api.telegram.org/bot6044058555:AAHPPGaxT8DJgo_uiT-v-LRmxRKCAXv89lg/sendMessage',
+        [
+            'chat_id' => 1135030572,
+            'text' => (string)view('report', $data),
+            'parse_mode' => "html"
+        ]);
+
+    }
 }

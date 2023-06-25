@@ -66,7 +66,6 @@ class GetFaqCommand extends Command
                 $questions = json_decode($course['structure'], true);
                 foreach ($questions as $question) {
                     $callback_data = 'GetFaq_' . 'getAnswer_' . $value . ' ' . $question['id'];
-                    dump($callback_data);
                     array_push($keyboard, [['text' => $question['name'], 'callback_data' => $callback_data]]);
                 }
             }

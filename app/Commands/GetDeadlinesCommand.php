@@ -23,7 +23,6 @@ class GetDeadlinesCommand extends Command
     {
         $userData = $this->getUpdate()->message->from;
         $user = TelegramUser::where('user_id', $userData->id)->first();
-        dump($this->getUpdate());
         if ($user == null){
             $this->replyWithMessage([
                 'text' =>  "<b> Для начала работы с ботом нужно прописать /start </b>",
