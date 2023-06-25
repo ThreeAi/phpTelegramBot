@@ -22,7 +22,6 @@ class GetFaqCommand extends Command
     {
         $userData = $this->getUpdate()->message->from;
         $user = TelegramUser::where('user_id', $userData->id)->first();
-        dump($this->getUpdate());
         if ($user == null) {
             $this->replyWithMessage([
                 'text' => "<b> Для начала работы с ботом нужно прописать /start </b>",
@@ -66,9 +65,19 @@ class GetFaqCommand extends Command
             if ($course['course'] == $value){
                 $questions = json_decode($course['structure'], true);
                 foreach ($questions as $question) {
-                    array_push($keyboard, [['text' => $question['name'], 'callback_data' => 'GetFaq_' . 'getAnswer_' . $question['answer']]]);
+                    $callback_data = 'GetFaq_' . 'getAnswer_' . $value . ' ' . $question['id'];
+                    dump($callback_data);
+                    array_push($keyboard, [['text' => $question['name'], 'callback_data' => $callback_data]]);
                 }
             }
+        }
+        if(empty($keyboard)) {
+            $bot->sendMessage([
+                'chat_id' => $userId,
+                'text' => "<b>На этом курсе не реализован этот модуль </b>",
+                'parse_mode' => 'HTML',
+            ]);
+            return;
         }
         $encodeMarkup = json_encode(array('inline_keyboard' => $keyboard));
         $bot->sendMessage([
@@ -80,9 +89,28 @@ class GetFaqCommand extends Command
     }
 
     public function getAnswer($userId, $value, BotsManager $bot){
+        $values = explode(' ', $value);
+        $id_course = $values[0];
+        $id_question = $values[1];
+        $courses = json_decode(file_get_contents($this->request['webservice'] .
+            $this->request['moodleBotToken'] .
+            $this->request['getTelegaramContent'] .
+            $this->request['format']), true);
+        $courses = array_reverse($courses);
+        $text = '';
+        foreach ($courses as $course){
+            if ($course['course'] == $id_course){
+                $questions = json_decode($course['structure'], true);
+                foreach ($questions as $question) {
+                    if ($question['id'] == $id_question) {
+                        $text = $question['answer'];
+                    }
+                }
+            }
+        }
         $bot->sendMessage([
             'chat_id' => $userId,
-            'text' => $value,
+            'text' => $text,
             'parse_mode' => 'HTML',
         ]);
     }
