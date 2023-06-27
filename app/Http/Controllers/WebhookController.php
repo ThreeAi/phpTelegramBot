@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Telegram\Bot\BotsManager;
+use App\Models\TelegramSetting;
 
 class WebhookController extends Controller
 {
@@ -13,6 +14,7 @@ class WebhookController extends Controller
     public function __construct(BotsManager $botsManager)
     {
         $this->botsManager = $botsManager;
+        $this->botsManager->setAccessToken(TelegramSetting::find(1)->telegram_token);
     }
     public function __invoke(Request $request): Response {
         $webhook = $this->botsManager->bot()->commandsHandler(true);

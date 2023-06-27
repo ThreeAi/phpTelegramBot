@@ -2,6 +2,7 @@
 
 namespace App\Commands;
 
+use App\Models\TelegramSetting;
 use Telegram\Bot\BotsManager;
 use Telegram\Bot\Commands\Command;
 use App\Models\TelegramUser;
@@ -11,12 +12,17 @@ class GetFaqCommand extends Command
     protected $name = 'getfaq';
     protected $description = 'get FAQ';
     protected $request = array(
-        'webservice' => "https://moodle-monolith.spbstu.ru/webservice/rest/server.php?wstoken=",
-        'moodleBotToken' => "c2f09f0db3b317e3f3ee96a15dde2871",
+        'webservice' => "/webservice/rest/server.php?wstoken=",
+        'moodleToken' => "",
         'getCourses' => "&wsfunction=core_enrol_get_users_courses&userid=",
         'getTelegaramContent' => "&wsfunction=get_telegrambotcontent&id=4",
         'format' => "&moodlewsrestformat=json"
     );
+
+    public function __construct(){
+        $this->request['webservice'] = TelegramSetting::find(1)->moodle_url . $this->request['webservice'];
+        $this->request['moodleToken'] = TelegramSetting::find(1)->moodle_token;
+    }
 
     public function handle()
     {
@@ -31,7 +37,7 @@ class GetFaqCommand extends Command
         }
         $moodleId = $user->moodle_id;
         $courses = json_decode(file_get_contents($this->request['webservice'] .
-            $this->request['moodleBotToken'] .
+            $this->request['moodleToken'] .
             $this->request['getCourses'] .
             $moodleId .
             $this->request['format']));
@@ -56,7 +62,7 @@ class GetFaqCommand extends Command
 
     public function getQuestion($userId, $value, BotsManager $bot){
         $courses = json_decode(file_get_contents($this->request['webservice'] .
-            $this->request['moodleBotToken'] .
+            $this->request['moodleToken'] .
             $this->request['getTelegaramContent'] .
             $this->request['format']), true);
         $keyboard = array();
@@ -92,7 +98,7 @@ class GetFaqCommand extends Command
         $id_course = $values[0];
         $id_question = $values[1];
         $courses = json_decode(file_get_contents($this->request['webservice'] .
-            $this->request['moodleBotToken'] .
+            $this->request['moodleToken'] .
             $this->request['getTelegaramContent'] .
             $this->request['format']), true);
         $courses = array_reverse($courses);

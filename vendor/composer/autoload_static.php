@@ -555,6 +555,7 @@ class ComposerStaticInit53863ff2e618dee5d5474a658f6bcad0
         'App\\Http\\Middleware\\TrustHosts' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustHosts.php',
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
+        'App\\Models\\TelegramSetting' => __DIR__ . '/../..' . '/app/Models/TelegramSetting.php',
         'App\\Models\\TelegramUser' => __DIR__ . '/../..' . '/app/Models/TelegramUser.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',

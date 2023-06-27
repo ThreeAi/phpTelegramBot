@@ -2,6 +2,7 @@
 
 namespace App\Commands;
 
+use App\Models\TelegramSetting;
 use Telegram\Bot\Commands\Command;
 use App\Models\TelegramUser;
 
@@ -11,8 +12,8 @@ class StartCommand extends Command
     protected $description = 'Запуск';
     protected TelegramUser $telegramUser;
     protected $request = array(
-        'webservice' => "https://moodle-monolith.spbstu.ru/webservice/rest/server.php?wstoken=",
-        'moodleBotToken' => "c2f09f0db3b317e3f3ee96a15dde2871",
+        'webservice' => "/webservice/rest/server.php?wstoken=",
+        'moodleToken' => "",
         'getUser' => "&wsfunction=get_user_by_field_tg&username_tg=",
         'format' => "&moodlewsrestformat=json"
     );
@@ -20,13 +21,15 @@ class StartCommand extends Command
     public function __construct(TelegramUser $telegramUser)
     {
         $this->telegramUser = $telegramUser;
+        $this->request['webservice'] = TelegramSetting::find(1)->moodle_url . $this->request['webservice'];
+        $this->request['moodleToken'] = TelegramSetting::find(1)->moodle_token;
     }
 
     public function handle()
     {
         $userData = $this->getUpdate()->message->from;
         $moodleId = json_decode(file_get_contents($this->request['webservice'] .
-                                        $this->request['moodleBotToken'] .
+                                        $this->request['moodleToken'] .
                                         $this->request['getUser'] .
                                         $userData->username .
                                         $this->request['format']));

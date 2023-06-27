@@ -5,19 +5,25 @@ namespace App\Commands;
 use Telegram\Bot\BotsManager;
 use Telegram\Bot\Commands\Command;
 use App\Models\TelegramUser;
+use App\Models\TelegramSetting;
 
 class GetDeadlinesCommand extends Command
 {
     protected $name = 'getdeadlines';
     protected $description = 'get deadlines';
     protected $request = array(
-        'webservice' => "https://moodle-monolith.spbstu.ru/webservice/rest/server.php?wstoken=",
-        'moodleBotToken' => "c2f09f0db3b317e3f3ee96a15dde2871",
+        'webservice' => "/webservice/rest/server.php?wstoken=",
+        'moodleToken' => "",
         'getCourses' => "&wsfunction=core_enrol_get_users_courses&userid=",
         'getAssigment' => "&wsfunction=mod_assign_get_assignments&courseids[0]=",
         'getQuizzes' => "&wsfunction=mod_quiz_get_quizzes_by_courses&courseids[0]=",
         'format' => "&moodlewsrestformat=json"
     );
+
+    public function __construct(){
+        $this->request['webservice'] = TelegramSetting::find(1)->moodle_url . $this->request['webservice'];
+        $this->request['moodleToken'] = TelegramSetting::find(1)->moodle_token;
+    }
 
     public function handle()
     {
@@ -32,7 +38,7 @@ class GetDeadlinesCommand extends Command
         }
         $moodleId = $user->moodle_id;
         $courses = json_decode(file_get_contents($this->request['webservice'] .
-                                        $this->request['moodleBotToken'] .
+                                        $this->request['moodleToken'] .
                                         $this->request['getCourses'] .
                                         $moodleId .
                                         $this->request['format']));
@@ -57,7 +63,7 @@ class GetDeadlinesCommand extends Command
 
     public function getTime($userId, $value, BotsManager $bot){
         $contentAssignments = json_decode(file_get_contents($this->request['webservice'] .
-            $this->request['moodleBotToken'] .
+            $this->request['moodleToken'] .
             $this->request['getAssigment'] .
             $value .
             $this->request['format']), true);
@@ -78,7 +84,7 @@ class GetDeadlinesCommand extends Command
             $tasks = "<b> задания \n</b>" . $tasks;
         }
         $contentQuizzes = json_decode(file_get_contents($this->request['webservice'] .
-            $this->request['moodleBotToken'] .
+            $this->request['moodleToken'] .
             $this->request['getQuizzes'] .
             $value .
             $this->request['format']), true);
