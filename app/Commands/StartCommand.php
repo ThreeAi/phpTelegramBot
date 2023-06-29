@@ -21,8 +21,8 @@ class StartCommand extends Command
     public function __construct(TelegramUser $telegramUser)
     {
         $this->telegramUser = $telegramUser;
-        $this->request['webservice'] = TelegramSetting::find(1)->moodle_url . $this->request['webservice'];
-        $this->request['moodleToken'] = TelegramSetting::find(1)->moodle_token;
+        $this->request['webservice'] = TelegramSetting::findOrFail(1)->moodle_url . $this->request['webservice'];
+        $this->request['moodleToken'] = TelegramSetting::findOrFail(1)->moodle_token;
     }
 
     public function handle()

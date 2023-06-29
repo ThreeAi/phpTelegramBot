@@ -14,7 +14,7 @@ class WebhookController extends Controller
     public function __construct(BotsManager $botsManager)
     {
         $this->botsManager = $botsManager;
-        $this->botsManager->setAccessToken(TelegramSetting::find(1)->telegram_token);
+        $this->botsManager->setAccessToken(TelegramSetting::findOrFail(1)->telegram_token);
     }
     public function __invoke(Request $request): Response {
         $webhook = $this->botsManager->bot()->commandsHandler(true);
