@@ -5,6 +5,7 @@ namespace App\Commands;
 use App\Models\TelegramSetting;
 use Telegram\Bot\Commands\Command;
 use App\Models\TelegramUser;
+use Telegram\Bot\Keyboard\Keyboard;
 
 class StartCommand extends Command
 {
@@ -40,6 +41,8 @@ class StartCommand extends Command
             ]);
             exit;
         }
+        $keyboard = new Keyboard(['keyboard' => [['/getfaq'], ['/getdeadlines']],
+                                    'resize_keyboard' => true]);
         $user = $this->telegramUser->firstOrCreate(['user_id' => $userData->id],
         [
             'user_id' => $userData->id,
@@ -61,7 +64,8 @@ class StartCommand extends Command
         else{
             $this->replyWithMessage([
                 'text' =>  '<b>Рады видеть вас снова!</b>',
-                'parse_mode' => 'HTML'
+                'parse_mode' => 'HTML',
+                'reply_markup' => $keyboard
             ]);
         }
     }

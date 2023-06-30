@@ -30,6 +30,7 @@ return [
     */
     'bots'                         => [
         'mybot' => [
+            'token' => 'empty',
             'commands'            => [
                 \App\Commands\StartCommand::class,
                 \App\Commands\GetDeadlinesCommand::class,
