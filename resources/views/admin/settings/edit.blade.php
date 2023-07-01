@@ -1,7 +1,8 @@
-@extends('layouts.main')
+@extends('layouts.admin')
+@section('title', 'EditSetting')
 @section('content')
     <div>
-        <form action="{{ route('settings.update', $setting->id) }}" method="post">
+        <form action="{{ route('admin.settings.update', $setting->id) }}" method="post">
             @csrf
             @method('patch')
             <div class="mb-3">

@@ -1,4 +1,5 @@
-@extends('layouts.main')
+@extends('layouts.admin')
+@section('title', 'Settings')
 @section('content')
     <table class="table">
         <thead>
@@ -11,12 +12,12 @@
         @foreach($settings as $setting)
             <tr>
                 <th scope="row">{{$setting->id}}</th>
-                <td><a href="{{route('settings.show', $setting->id)}}"> {{$setting->moodle_url}} </td>
+                <td><a href="{{route('admin.settings.show', $setting->id)}}"> {{$setting->moodle_url}} </td>
             </tr>
         @endforeach
         </tbody>
     </table>
     <div class="mb-3">
-        <a href="{{route('settings.create')}}" class="btn btn-primary" role="button" data-bs-toggle="button">Add new</a>
+        <a href="{{route('admin.settings.create')}}" class="btn btn-primary" role="button" data-bs-toggle="button">Add new</a>
     </div>
 @endsection

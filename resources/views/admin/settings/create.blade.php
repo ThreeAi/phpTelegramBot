@@ -1,7 +1,8 @@
-@extends('layouts.main')
+@extends('layouts.admin')
+@section('title', 'CreateSetting')
 @section('content')
     <div>
-            <form action="{{ route('settings.store') }}" method="post">
+            <form action="{{ route('admin.settings.store') }}" method="post">
                 @csrf
                 <div class="mb-3">
                     <label for="telegram_token">telegram_token</label>
