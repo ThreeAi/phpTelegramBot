@@ -17,8 +17,8 @@ class DatabaseSeeder extends Seeder
     {
         Admin::create([
             "name" => "Admin",
-            "email" => "laravel@laravel.com",
-            "password" => bcrypt("12345"),
+            "email" => env('ADMIN_EMAIL'),
+            "password" => bcrypt(env('ADMIN_PASSWORD')),
         ]);
     }
 }

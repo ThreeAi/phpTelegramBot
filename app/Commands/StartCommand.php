@@ -29,41 +29,45 @@ class StartCommand extends Command
     public function handle()
     {
         $userData = $this->getUpdate()->message->from;
-        $moodleId = json_decode(file_get_contents($this->request['webservice'] .
-                                        $this->request['moodleToken'] .
-                                        $this->request['getUser'] .
-                                        $userData->username .
-                                        $this->request['format']));
-        if ($moodleId == 0){
+        $command = explode(' ', $this->getUpdate()->message->text);
+        if (count($command) != 1) {
+            $moodleId = $command[1];
+        } else {
+            $moodleId = json_decode(file_get_contents($this->request['webservice'] .
+                $this->request['moodleToken'] .
+                $this->request['getUser'] .
+                $userData->username .
+                $this->request['format']));
+        }
+        if ($moodleId == 0) {
             $this->replyWithMessage([
-                'text' =>  'У вас не указан username',
+                'text' => 'У вас не указан username в вашем профиле https://moodle-monolith.spbstu.ru/user/editadvanced.php',
                 'parse_mode' => 'HTML'
             ]);
             exit;
         }
         $keyboard = new Keyboard(['keyboard' => [['/getfaq'], ['/getdeadlines']],
-                                    'resize_keyboard' => true]);
+            'resize_keyboard' => true]);
         $user = $this->telegramUser->firstOrCreate(['user_id' => $userData->id],
-        [
-            'user_id' => $userData->id,
-            'username' => $userData->username,
-            'moodle_id' => $moodleId
-        ]);
-        if ($user->wasRecentlyCreated){
-            $user = $this->telegramUser->firstOrCreate(['user_id' => $userData->id],
             [
                 'user_id' => $userData->id,
                 'username' => $userData->username,
                 'moodle_id' => $moodleId
             ]);
+        if ($user->wasRecentlyCreated) {
+            $user = $this->telegramUser->firstOrCreate(['user_id' => $userData->id],
+                [
+                    'user_id' => $userData->id,
+                    'username' => $userData->username,
+                    'moodle_id' => $moodleId
+                ]);
             $this->replyWithMessage([
-                'text' =>  'Вы зарегистирированы в базе бота',
+                'text' => 'Вы зарегистирированы в базе бота',
                 'parse_mode' => 'HTML'
             ]);
-        }
-        else{
+        } else {
             $this->replyWithMessage([
-                'text' =>  '<b>Рады видеть вас снова!</b>',
+                'text' => '<b>Рады видеть вас снова!</b>',
                 'parse_mode' => 'HTML',
                 'reply_markup' => $keyboard
             ]);

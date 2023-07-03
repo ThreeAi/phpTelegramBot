@@ -19,7 +19,8 @@ class GetFaqCommand extends Command
         'format' => "&moodlewsrestformat=json"
     );
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->request['webservice'] = TelegramSetting::findOrFail(1)->moodle_url . $this->request['webservice'];
         $this->request['moodleToken'] = TelegramSetting::findOrFail(1)->moodle_token;
     }
@@ -33,7 +34,7 @@ class GetFaqCommand extends Command
                 'text' => "<b> Для начала работы с ботом нужно прописать /start </b>",
                 'parse_mode' => 'HTML'
             ]);
-            exit;
+            return;
         }
         $moodleId = $user->moodle_id;
         $courses = json_decode(file_get_contents($this->request['webservice'] .
@@ -42,12 +43,12 @@ class GetFaqCommand extends Command
             $moodleId .
             $this->request['format']));
         $keyboard = array();
-        if (empty($courses)){
+        if (empty($courses)) {
             $this->replyWithMessage([
                 'text' => "<b>Вы не записаны ни на один курс </b>",
                 'parse_mode' => 'HTML'
             ]);
-            exit;
+            return;
         }
         foreach ($courses as $course) {
             array_push($keyboard, [['text' => $course->shortname, 'callback_data' => 'GetFaq_' . 'getQuestion_' . $course->id]]);
@@ -60,15 +61,17 @@ class GetFaqCommand extends Command
         ]);
     }
 
-    public function getQuestion($userId, $value, BotsManager $bot){
-        $courses = json_decode(file_get_contents($this->request['webservice'] .
+    public function getQuestion($userId, $value, BotsManager $bot)
+    {
+        $courses = json_decode(file_get_contents(
+            $this->request['webservice'] .
             $this->request['moodleToken'] .
             $this->request['getTelegaramContent'] .
             $this->request['format']), true);
         $keyboard = array();
         $courses = array_reverse($courses);
-        foreach ($courses as $course){
-            if ($course['course'] == $value){
+        foreach ($courses as $course) {
+            if ($course['course'] == $value) {
                 $questions = json_decode($course['structure'], true);
                 foreach ($questions as $question) {
                     $callback_data = 'GetFaq_' . 'getAnswer_' . $value . ' ' . $question['id'];
@@ -76,7 +79,7 @@ class GetFaqCommand extends Command
                 }
             }
         }
-        if(empty($keyboard)) {
+        if (empty($keyboard)) {
             $bot->sendMessage([
                 'chat_id' => $userId,
                 'text' => "<b>На этом курсе не реализован этот модуль </b>",
@@ -93,18 +96,20 @@ class GetFaqCommand extends Command
         ]);
     }
 
-    public function getAnswer($userId, $value, BotsManager $bot){
+    public function getAnswer($userId, $value, BotsManager $bot)
+    {
         $values = explode(' ', $value);
         $id_course = $values[0];
         $id_question = $values[1];
-        $courses = json_decode(file_get_contents($this->request['webservice'] .
+        $courses = json_decode(file_get_contents(
+            $this->request['webservice'] .
             $this->request['moodleToken'] .
             $this->request['getTelegaramContent'] .
             $this->request['format']), true);
         $courses = array_reverse($courses);
         $text = '';
-        foreach ($courses as $course){
-            if ($course['course'] == $id_course){
+        foreach ($courses as $course) {
+            if ($course['course'] == $id_course) {
                 $questions = json_decode($course['structure'], true);
                 foreach ($questions as $question) {
                     if ($question['id'] == $id_question) {

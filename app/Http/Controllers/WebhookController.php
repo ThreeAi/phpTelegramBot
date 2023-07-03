@@ -18,8 +18,9 @@ class WebhookController extends Controller
     }
     public function __invoke(Request $request): Response {
         $webhook = $this->botsManager->bot()->commandsHandler(true);
-        $apiUrl = "https://api.telegram.org/bot6044058555:AAHPPGaxT8DJgo_uiT-v-LRmxRKCAXv89lg/sendMessage?chat_id=1135030572&text=" . urlencode($webhook);
-        //file_get_contents($apiUrl);
+        //for debug
+//        $apiUrl = "https://api.telegram.org/bot" . env('REPORT_TELEGRAM_BOT_TOKEN') . "/sendMessage?chat_id=1135030572&text=" . urlencode($webhook);
+//        file_get_contents($apiUrl);
          if($webhook->objectType() == 'callback_query'){
              $this->processCallback($webhook);
          }
