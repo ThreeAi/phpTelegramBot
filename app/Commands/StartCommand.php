@@ -54,8 +54,8 @@ class StartCommand extends Command
                 'username' => $userData->username,
                 'moodle_id' => $moodleId
             ]);
-        if ($user->wasRecentlyCreated) {
-            $user = $this->telegramUser->firstOrCreate(['user_id' => $userData->id],
+        if (!$user->wasRecentlyCreated) {
+            $user = $this->telegramUser->updateOrCreate(['user_id' => $userData->id],
                 [
                     'user_id' => $userData->id,
                     'username' => $userData->username,
