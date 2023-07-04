@@ -54,18 +54,21 @@ class StartCommand extends Command
                 'username' => $userData->username,
                 'moodle_id' => $moodleId
             ]);
-        if (!$user->wasRecentlyCreated) {
-            $user = $this->telegramUser->updateOrCreate(['user_id' => $userData->id],
-                [
-                    'user_id' => $userData->id,
-                    'username' => $userData->username,
-                    'moodle_id' => $moodleId
-                ]);
+        if ($user->wasRecentlyCreated) {
             $this->replyWithMessage([
                 'text' => 'Вы зарегистирированы в базе бота',
-                'parse_mode' => 'HTML'
+                'parse_mode' => 'HTML',
+                'reply_markup' => $keyboard
             ]);
         } else {
+            if ($user->moodle_id != $moodleId) {
+                $user->update(
+                    [
+                        'user_id' => $userData->id,
+                        'username' => $userData->username,
+                        'moodle_id' => $moodleId
+                    ]);
+            }
             $this->replyWithMessage([
                 'text' => '<b>Рады видеть вас снова!</b>',
                 'parse_mode' => 'HTML',

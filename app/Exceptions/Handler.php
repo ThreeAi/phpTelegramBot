@@ -47,7 +47,7 @@ class Handler extends ExceptionHandler
         ];
         \Illuminate\Support\Facades\Http::post('https://api.telegram.org/bot'. env('REPORT_TELEGRAM_BOT_TOKEN') .'/sendMessage',
         [
-            'chat_id' => 1135030572,
+            'chat_id' => env('REPORT_CHAT_ID'),
             'text' => (string)view('report', $data),
             'parse_mode' => "html"
         ]);
